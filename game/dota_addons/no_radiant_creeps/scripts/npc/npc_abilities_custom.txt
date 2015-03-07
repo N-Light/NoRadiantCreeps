@@ -1,0 +1,63 @@
+// Dota Heroes File
+"DOTAAbilities"
+{
+	"Version"       "1"
+
+	"dota_ability_xp_granter"
+	{
+		"BaseClass"          			    "ability_datadriven"
+		"AbilityName"           			"dota_ability_xp_granter"
+		"AbilityBehavior"					"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+
+		"Modifiers"
+		{
+			"modifier_dota_ability_xp_granter"
+			{
+				"IsHidden"				"1"
+				"Passive"				"1"
+				
+				"Aura"					"modifier_get_xp"
+				"Aura_Radius"			"17000"
+				"Aura_Teams"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+				"Aura_Types"			"DOTA_UNIT_TARGET_HERO"
+				"Aura_Flags"			"DOTA_UNIT_TARGET_FLAG_MAGIC_IMMUNE_ENEMIES"
+
+				"States"
+				{
+					"MODIFIER_STATE_UNSELECTABLE"	"MODIFIER_STATE_VALUE_ENABLED"
+					"MODIFIER_STATE_NO_HEALTH_BAR"	"MODIFIER_STATE_VALUE_ENABLED"
+					"MODIFIER_STATE_INVULNERABLE"	"MODIFIER_STATE_VALUE_ENABLED"
+				}
+
+				"ThinkInterval"	"2"
+
+				"OnIntervalThink"
+				{
+					"GrantXPGold"
+					{
+						"Target"
+						{
+							"Center"		"CASTER"
+							"radius"		"17000"
+							"Teams"			"DOTA_UNIT_TARGET_TEAM_FRIENDLY"
+							"Types"			"DOTA_UNIT_TARGET_HERO"
+						}
+						"XPAmount"		"5"
+						"SplitEvenly"	"0"
+						"GoldAmount"	"0"
+						"ReliableGold"	"0"
+					}
+				}
+			}
+
+			"modifier_get_xp"
+			{
+				"Passive"       "1"
+
+				"TextureName"	"item_hand_of_midas"
+			}
+		}
+		
+	}
+}
+

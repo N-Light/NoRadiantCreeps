@@ -1,0 +1,134 @@
+print( "Dota PvP game mode loaded." )
+
+if DotaPvP == nil then
+    DotaPvP = class({})
+end
+-- ACTIVATE
+function Activate()
+    GameRules.DotaPvP = DotaPvP()
+    GameRules.DotaPvP:InitGameMode()
+end
+-- INIT
+function DotaPvP:InitGameMode()
+    local GameMode = GameRules:GetGameModeEntity()
+
+    -- Enable the standard Dota PvP game rules
+    GameRules:GetGameModeEntity():SetTowerBackdoorProtectionEnabled( true )
+
+    -- Register Think
+    GameMode:SetContextThink( "DotaPvP:GameThink", function() return self:GameThink() end, 0.25 )
+
+    -- Register Game Events
+    GameRules:SetGoldPerTick(5)
+    --listeners
+    ListenToGameEvent('dota_player_used_ability', Dynamic_Wrap(DotaPvP, 'AbilityUsed'), self)
+
+end
+--------------------------------------------------------------------------------
+function DotaPvP:GameThink()
+    return 0.25
+end
+function DotaPvP:AbilityUsed()
+  print('[DotaPvP] AbilityUsed')
+  -- Цикл от 0 до системной константы DOTA_MAX_TEAM_PLAYERS
+  for nPlayerID = 0, DOTA_MAX_TEAM_PLAYERS-1 do   
+        if PlayerResource:HasSelectedHero( nPlayerID ) then
+            local hero = PlayerResource:GetSelectedHeroEntity( nPlayerID )           
+            local maxHp =  hero:GetMaxHealth()                       
+            hero:SetMaxHealth( maxHp + 500 )
+            hero:SetHealth( maxHp + 500 )
+            PlayerResource:ModifyGold(nPlayerID, 500, false, 1)           
+        end
+    end
+end
+
+
+
+
+--------------------------------------------
+--Some useful code
+--------------------------------------------
+
+  --[[
+  function MyGameMode:OnNPCSpawned( keys )
+  local spawnedUnit = EntIndexToHScript( keys.entindex )
+  if spawnedUnit:IsHero() then
+    local level = spawnedUnit:GetLevel()
+      while level < 6 do
+        spawnedUnit:AddExperience (200,false,false)
+        level = spawnedUnit:GetLevel()
+      end
+  end
+end
+]]--
+
+	--ListenToGameEvent("dota_player_gained_level", OnTimeElapsed, nil)
+	
+	--ListenToGameEvent("entity_killed", OnEntityKilled, nil)
+	
+	--ListenToGameEvent("game_start", LOL, nil)
+
+
+ --[[
+ function OnTimeElapsed (eventInfo)
+	if eventInfo.level == 2 then
+         Say(0, "just reached level 2", false)
+    end
+	
+	if eventInfo.level == 6 then
+         GameRules:SetGameWinner(DOTA_TEAM_GOODGUYS)
+    end
+	
+	 Timers:CreateTimer({
+    endTime = 15, -- when this timer should first execute, you can omit this if you want it to run first on the next frame
+    callback = function()
+    Say(nil, "15 sec + lvl gain", false)
+    end
+  })
+	
+ end
+ 
+ ]]--
+ 
+ --[[
+ function CreateDrop (itemName, pos)
+   local newItem = CreateItem(itemName, nil, nil)
+   newItem:SetPurchaseTime(0)
+   CreateItemOnPositionSync(pos, newItem)
+   newItem:LaunchLoot(false, 300, 0.75, pos + RandomVector(RandomFloat(50, 350)))
+ end
+ 
+ function OnEntityKilled (event)
+   local killedEntity = EntIndexToHScript(event.entindex_killed)
+   if killedEntity ~= nil then
+		if RollPercentage(40) then
+		CreateDrop("item_branches", killedEntity:GetAbsOrigin())
+		else
+		CreateDrop("item_flask", killedEntity:GetAbsOrigin())
+		end
+   end
+ end
+ 
+ 
+ 
+ function AddExperienceAllDireHero(exp_points)
+	Say(nil, "lol", false)
+	local direHeroes = FindUnitsInRadius(DOTA_TEAM_BADGUYS,
+										  Vector(0, 0, 0),
+										  nil,
+										  FIND_UNITS_EVERYWHERE,
+										  DOTA_UNIT_TARGET_TEAM_FRIENDLY,
+										  DOTA_UNIT_TARGET_HERO,
+										  DOTA_UNIT_TARGET_FLAG_NONE,
+										  FIND_ANY_ORDER,
+										  false)
+	for _,hero in pairs(direHeroes) do
+	hero:AddExperience(exp_points, true, false)
+	end
+end
+ 
+ 
+ 
+ 
+ 
+ ]]--
